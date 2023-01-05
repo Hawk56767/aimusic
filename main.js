@@ -4,6 +4,8 @@ leftWristX=0;
 leftWristY=0;
 rightWristX=0;
 rightWristY=0;
+scoreLeftWrist=0;
+scoreRightWrist=0;
 function preload(){
 song_h=loadSound("music.mp3");
 song_p=loadSound("music2.mp3");
@@ -18,15 +20,25 @@ poseNet=ml5.poseNet(video, modelLoaded);
 poseNet.on('pose', gotPoses)}
 function draw(){
 image(video, 0, 0, 600, 400);
+if (scoreLeftWrist>0.2) {
+    circle(leftWristX, leftWristY, 20);
+    song_p.play();
+}
+if (scoreRightWrist>0.2) {
+    circle(rightWristX, rightWristY, 20);
+    song_h.play();
+}
 }
 function modelLoaded(){
 console.log('Model is Loaded');
 }
-function play(){
-song_h.play();
-}
-function gotPoses(){
+
+function gotPoses(results){
 if (results.length>0) {
+scoreLeftWrist=results[0].pose.keypoints[9].score;
+scoreRightWrist=results[0].pose.keypoints[10].score;
+console.log("scoreLeftWrist = "+scoreLeftWrist);
+console.log("scoreRightWrist = "+scoreRightWrist);
 console.log(results);
 leftWristX=results[0].pose.leftWrist.x;
 leftWristY=results[0].pose.leftWrist.y;
